@@ -12,6 +12,7 @@ private:
     double mTapDelay;
     double mOutDelay;
     unsigned int sampleCount;
+    void updateBuffer();
 public:
     void setSampleRate(double sampleRate);
     void setTapGain(double tapGain);

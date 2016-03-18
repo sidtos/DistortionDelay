@@ -82,13 +82,9 @@ void DistortionDelay::ProcessDoubleReplacing(double** inputs, double** outputs, 
   double* out1 = outputs[0];
   double* out2 = outputs[1];
 
-  //mDistortion.processSamples(in1, out1, nFrames);
-  //mDistortion.processSamples(in2, out2, nFrames);
-  
-  //mStutter.setBPM(GetTempo());
-  //mStutter.processSamples(in1, out1, nFrames);
-  //mStutter.processSamples(in2, out2, nFrames);
-  
+  mStutter.setBPM(GetTempo());
+  mDistortion.processSamples(in1, in2, out1, out2, nFrames);
+  mStutter.processSamples(out1, out2, in1, in2, nFrames);
   mDelay.processSamples(in1, in2, out1, out2, nFrames);
 }
 
