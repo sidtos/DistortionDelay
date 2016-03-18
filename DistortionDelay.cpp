@@ -81,11 +81,22 @@ void DistortionDelay::ProcessDoubleReplacing(double** inputs, double** outputs, 
   double* in2 = inputs[1];
   double* out1 = outputs[0];
   double* out2 = outputs[1];
+  double distIn1, distIn2, distOut1, distOut2, stutOut1, stutOut2, delOut1, delOut2;
 
   mStutter.setBPM(GetTempo());
-  mDistortion.processSamples(in1, in2, out1, out2, nFrames);
-  mStutter.processSamples(out1, out2, in1, in2, nFrames);
-  mDelay.processSamples(in1, in2, out1, out2, nFrames);
+  
+  for (int s = 0; s < nFrames; ++s, ++in1, ++in2, ++out1, ++out2)
+  {
+    distIn1 = *in1;
+    distIn2 = *in2;
+    
+    mDistortion.processSamples(distIn1, distIn2, distOut1, distOut2, nFrames);
+    mStutter.processSamples(distOut1, distOut2, stutOut1, stutOut2, nFrames);
+    mDelay.processSamples(stutOut1, stutOut2, delOut1, delOut2, nFrames);
+    
+    *out1 = *in1 + delOut1;
+    *out2 = *in2 + delOut2;
+  }
 }
 
 void DistortionDelay::Reset()

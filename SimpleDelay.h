@@ -17,7 +17,7 @@ public:
     void setSampleRate(double sampleRate);
     void setTapGain(double tapGain);
     void setTapDelay(double tapDelay);
-    void processSamples(double* inputbuffer1, double* inputbuffer2, double* outputbuffer1, double* outputbuffer2, int nFrames);
+    void processSamples(double inputbuffer1, double inputbuffer2, double &outputbuffer1, double &outputbuffer2, int nFrames);
 };
 
 #endif /* defined(__DistortionDelay__SimpleDelay__) */

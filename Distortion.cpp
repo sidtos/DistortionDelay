@@ -9,25 +9,22 @@ void Distortion::setThreshold(double threshold) {
     mThreshold = threshold;
 }
 
-void Distortion::processSamples(double* inputbuffer1, double* inputbuffer2, double* outputbuffer1, double* outputbuffer2, int nFrames) {
+void Distortion::processSamples(double inputbuffer1, double inputbuffer2, double &outputbuffer1, double &outputbuffer2, int nFrames) {
     
-    for (int i = 0; i < nFrames; i++) {
-        
-        //left
-        if(inputbuffer1[i] >= 0) {
-            outputbuffer1[i] = fmin(inputbuffer1[i], mThreshold);
-        } else {
-            outputbuffer1[i] = fmax(inputbuffer1[i], -mThreshold);
-        }
-        outputbuffer1[i] /= mThreshold;
-        
-        //right
-        if(inputbuffer2[i] >= 0) {
-            outputbuffer2[i] = fmin(inputbuffer2[i], mThreshold);
-        } else {
-            outputbuffer2[i] = fmax(inputbuffer2[i], -mThreshold);
-        }
-        outputbuffer2[i] /= mThreshold;
+    //left
+    if(inputbuffer1 >= 0) {
+        outputbuffer1 = fmin(inputbuffer1, mThreshold);
+    } else {
+        outputbuffer1 = fmax(inputbuffer1, -mThreshold);
     }
+    outputbuffer1 /= mThreshold;
+    
+    //right
+    if(inputbuffer2 >= 0) {
+        outputbuffer2 = fmin(inputbuffer2, mThreshold);
+    } else {
+        outputbuffer2 = fmax(inputbuffer2, -mThreshold);
+    }
+    outputbuffer2 /= mThreshold;
     
 }
