@@ -5,6 +5,7 @@
 #include "Distortion.h"
 #include "Stutter.h"
 #include "SimpleDelay.h"
+#include "Filter.h"
 
 class DistortionDelay : public IPlug
 {
@@ -23,6 +24,9 @@ private:
   Stutter mStutter;
   double mTapDelay;
   SimpleDelay mDelay;
+  double mLPFreq;
+  double mHPFreq;
+  Filter mFilter;
 };
 
 #endif

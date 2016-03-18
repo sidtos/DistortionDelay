@@ -9,7 +9,7 @@ void Stutter::setBPM(double bpm) {
     mBPM = bpm;
 }
 
-void Stutter::setSpeed(double speed) {
+void Stutter::setSpeed(int speed) {
     mSpeed = speed;
 }
 

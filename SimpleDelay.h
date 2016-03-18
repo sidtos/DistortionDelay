@@ -6,6 +6,7 @@
 class SimpleDelay {
 private:
     int mSampleRate;
+    double mBPM;
     double* delayBuffer1;
     double* delayBuffer2;
     double mTapGain;
@@ -15,8 +16,9 @@ private:
     void updateBuffer();
 public:
     void setSampleRate(double sampleRate);
+    void setBPM(double BPM);
     void setTapGain(double tapGain);
-    void setTapDelay(double tapDelay);
+    void setTapDelay(int tapDelay);
     void processSamples(double inputbuffer1, double inputbuffer2, double &outputbuffer1, double &outputbuffer2, int nFrames);
 };
 
