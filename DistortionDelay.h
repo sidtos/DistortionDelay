@@ -27,6 +27,7 @@ private:
   double mLPFreq;
   double mHPFreq;
   Filter mFilter;
+  void createPresets();
 };
 
 #endif

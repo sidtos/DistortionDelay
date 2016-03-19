@@ -6,7 +6,7 @@
 // GUI
 //-----------------------------------------------------------------------
 
-const int kNumPrograms = 1;
+const int kNumPrograms = 3;
 
 enum EParams
 {
@@ -24,24 +24,24 @@ enum ELayout
   kWidth = GUI_WIDTH,
   kHeight = GUI_HEIGHT,
 
-  kThresholdX = 10,
-  kThresholdY = 100,
+  kThresholdX = 151,
+  kThresholdY = 62,
   kKnobFrames = 60,
   
-  kSpeedX = 60,
-  kSpeedY = 100,
+  kSpeedX = 450,
+  kSpeedY = 62,
   
-  kTapDelayX = 110,
-  kTapDelayY = 100,
+  kTapDelayX = 151,
+  kTapDelayY = 462,
   
-  kTapGainX = 160,
-  kTapGainY = 100,
+  kTapGainX = 450,
+  kTapGainY = 462,
   
-  kHPX = 210,
-  kHPY = 100,
+  kHPX = 450,
+  kHPY = 262,
   
-  kLPX = 260,
-  kLPY = 100,
+  kLPX = 151,
+  kLPY = 262,
 };
 
 DistortionDelay::DistortionDelay(IPlugInstanceInfo instanceInfo)
@@ -50,7 +50,7 @@ DistortionDelay::DistortionDelay(IPlugInstanceInfo instanceInfo)
   TRACE;
 
   //arguments are: name, defaultVal, minVal, maxVal, step, label
-  GetParam(kThreshold)->InitDouble("Threshold", 100., 0.01, 100., 0.01, "%");
+  GetParam(kThreshold)->InitDouble("Threshold", 0.01, 0.01, 99.99, 0.01, "%");
   GetParam(kThreshold)->SetShape(2.);
   
   GetParam(kSpeed)->InitInt("Speed", 1, 1, 4, "note");
@@ -66,21 +66,26 @@ DistortionDelay::DistortionDelay(IPlugInstanceInfo instanceInfo)
   GetParam(kLP)->SetShape(2.);
 
   IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
-  pGraphics->AttachPanelBackground(&COLOR_RED);
+  pGraphics->AttachBackground(BG_ID, BG_FN);
 
   IBitmap knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, kKnobFrames);
+  IBitmap redknob = pGraphics->LoadIBitmap(REDKNOB_ID, REDKNOB_FN, kKnobFrames);
+  IBitmap orangeknob = pGraphics->LoadIBitmap(ORANGEKNOB_ID, ORANGEKNOB_FN, kKnobFrames);
+  IBitmap blueknob = pGraphics->LoadIBitmap(BLUEKNOB_ID, BLUEKNOB_FN, kKnobFrames);
+  IBitmap cyanknob = pGraphics->LoadIBitmap(CYANKNOB_ID, CYANKNOB_FN, kKnobFrames);
+  IBitmap yellowknob = pGraphics->LoadIBitmap(YELLOWKNOB_ID, YELLOWKNOB_FN, kKnobFrames);
+  IBitmap greenknob = pGraphics->LoadIBitmap(GREENKNOB_ID, GREENKNOB_FN, kKnobFrames);
 
-  pGraphics->AttachControl(new IKnobMultiControl(this, kThresholdX, kThresholdY, kThreshold, &knob));
-  pGraphics->AttachControl(new IKnobMultiControl(this, kSpeedX, kSpeedY, kSpeed, &knob));
-  pGraphics->AttachControl(new IKnobMultiControl(this, kTapDelayX, kTapDelayY, kTapDelay, &knob));
-  pGraphics->AttachControl(new IKnobMultiControl(this, kTapGainX, kTapGainY, kTapGain, &knob));
-  pGraphics->AttachControl(new IKnobMultiControl(this, kHPX, kHPY, kHP, &knob));
-  pGraphics->AttachControl(new IKnobMultiControl(this, kLPX, kLPY, kLP, &knob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, kThresholdX, kThresholdY, kThreshold, &redknob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, kSpeedX, kSpeedY, kSpeed, &orangeknob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, kTapDelayX, kTapDelayY, kTapDelay, &yellowknob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, kTapGainX, kTapGainY, kTapGain, &greenknob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, kHPX, kHPY, kHP, &cyanknob));
+  pGraphics->AttachControl(new IKnobMultiControl(this, kLPX, kLPY, kLP, &blueknob));
 
   AttachGraphics(pGraphics);
 
-  //MakePreset("preset 1", ... );
-  MakeDefaultPreset((char *) "-", kNumPrograms);
+  createPresets();
 }
 
 DistortionDelay::~DistortionDelay() {}
@@ -104,14 +109,15 @@ void DistortionDelay::ProcessDoubleReplacing(double** inputs, double** outputs, 
     distIn1 = *in1;
     distIn2 = *in2;
     
+    //effects chain
     mDistortion.processSamples(distIn1, distIn2, distOut1, distOut2, nFrames);
     mStutter.processSamples(distOut1, distOut2, stutOut1, stutOut2, nFrames);
     mDelay.processSamples(stutOut1, stutOut2, delOut1, delOut2, nFrames);
     mFilter.processSamplesLP(delOut1, delOut2, lpOut1, lpOut2, nFrames);
     mFilter.processSamplesHP(lpOut1, lpOut2, hpOut1, hpOut2, nFrames);
     
-    *out1 = *in1 + hpOut1;
-    *out2 = *in2 + hpOut2;
+    *out1 = *in1 + hpOut1; //Dry + Wet
+    *out2 = *in2 + hpOut2; //Dry + Wet
   }
 }
 
@@ -132,7 +138,7 @@ void DistortionDelay::OnParamChange(int paramIdx)
   switch (paramIdx)
   {
     case kThreshold:
-      mDistortion.setThreshold(GetParam(kThreshold)->Value() / 100.);
+      mDistortion.setThreshold(1. - (GetParam(kThreshold)->Value() / 100.));
       break;
     
     case kSpeed:
@@ -158,4 +164,10 @@ void DistortionDelay::OnParamChange(int paramIdx)
     default:
       break;
   }
+}
+
+void DistortionDelay::createPresets() {
+  MakePreset("clean", 0.01, 1, 2, 0, 20., 8000.);
+  MakePreset("slightly distorted", 0.01, 1, 2, 0, 20., 8000.);
+  MakePreset("fuzzy", 0.01, 1, 2, 0, 20., 8000.);
 }
