@@ -3,15 +3,14 @@
 
 void SimpleDelay::setSampleRate(double sampleRate) {
     mSampleRate = sampleRate;
-    delayBuffer1 = new double [mSampleRate];
-    delayBuffer2 = new double [mSampleRate];
+    //initialize with zeros
+    delayBuffer1 = new double [mSampleRate]();
+    delayBuffer2 = new double [mSampleRate]();
     sampleCount = 0;
-    updateBuffer();
 }
 
 void SimpleDelay::setBPM(double BPM) {
     mBPM = BPM;
-    updateBuffer();
 }
 
 void SimpleDelay::setTapGain(double tapGain) {
@@ -20,7 +19,6 @@ void SimpleDelay::setTapGain(double tapGain) {
 
 void SimpleDelay::setTapDelay(int tapDelay) {
     mTapDelay = tapDelay;
-    updateBuffer();
 }
 
 void SimpleDelay::updateBuffer() {

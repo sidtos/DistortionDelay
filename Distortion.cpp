@@ -26,5 +26,4 @@ void Distortion::processSamples(double inputbuffer1, double inputbuffer2, double
         outputbuffer2 = fmax(inputbuffer2, -mThreshold);
     }
     outputbuffer2 /= mThreshold;
-    
 }

@@ -13,12 +13,12 @@ private:
     double mTapDelay;
     double mOutDelay;
     unsigned int sampleCount;
-    void updateBuffer();
 public:
     void setSampleRate(double sampleRate);
     void setBPM(double BPM);
     void setTapGain(double tapGain);
     void setTapDelay(int tapDelay);
+    void updateBuffer();
     void processSamples(double inputbuffer1, double inputbuffer2, double &outputbuffer1, double &outputbuffer2, int nFrames);
 };
 

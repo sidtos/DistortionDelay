@@ -45,30 +45,32 @@ enum ELayout
 };
 
 DistortionDelay::DistortionDelay(IPlugInstanceInfo instanceInfo)
-  :	IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), mThreshold(1.)
+  :	IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
 {
   TRACE;
+  
+  //initialize buffers
+  mDelay.setSampleRate(GetSampleRate());
+  mDistortion.setSampleRate(GetSampleRate());
+  mStutter.setSampleRate(GetSampleRate());
+  mFilter.setSampleRate(GetSampleRate());
 
   //arguments are: name, defaultVal, minVal, maxVal, step, label
   GetParam(kThreshold)->InitDouble("Threshold", 0.01, 0.01, 99.99, 0.01, "%");
   GetParam(kThreshold)->SetShape(2.);
-  
   GetParam(kSpeed)->InitInt("Speed", 1, 1, 4, "note");
-  
   GetParam(kTapDelay)->InitInt("Delay", 1, 1, 4, "note");
-  
   GetParam(kTapGain)->InitInt("DelayGain", -10, -44, 0, "dB");
-  
   GetParam(kHP)->InitDouble("HP", 20., 20., 10000., 1., "%");
   GetParam(kHP)->SetShape(2.);
-  
   GetParam(kLP)->InitDouble("LP", 20000., 300., 20000., 1., "%");
   GetParam(kLP)->SetShape(2.);
 
+  //create window + background
   IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
   pGraphics->AttachBackground(BG_ID, BG_FN);
 
-  IBitmap knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, kKnobFrames);
+  //load knobs
   IBitmap redknob = pGraphics->LoadIBitmap(REDKNOB_ID, REDKNOB_FN, kKnobFrames);
   IBitmap orangeknob = pGraphics->LoadIBitmap(ORANGEKNOB_ID, ORANGEKNOB_FN, kKnobFrames);
   IBitmap blueknob = pGraphics->LoadIBitmap(BLUEKNOB_ID, BLUEKNOB_FN, kKnobFrames);
@@ -76,6 +78,7 @@ DistortionDelay::DistortionDelay(IPlugInstanceInfo instanceInfo)
   IBitmap yellowknob = pGraphics->LoadIBitmap(YELLOWKNOB_ID, YELLOWKNOB_FN, kKnobFrames);
   IBitmap greenknob = pGraphics->LoadIBitmap(GREENKNOB_ID, GREENKNOB_FN, kKnobFrames);
 
+  //create knob controls
   pGraphics->AttachControl(new IKnobMultiControl(this, kThresholdX, kThresholdY, kThreshold, &redknob));
   pGraphics->AttachControl(new IKnobMultiControl(this, kSpeedX, kSpeedY, kSpeed, &orangeknob));
   pGraphics->AttachControl(new IKnobMultiControl(this, kTapDelayX, kTapDelayY, kTapDelay, &yellowknob));
@@ -99,10 +102,12 @@ void DistortionDelay::ProcessDoubleReplacing(double** inputs, double** outputs, 
   double* in2 = inputs[1];
   double* out1 = outputs[0];
   double* out2 = outputs[1];
-  double distIn1, distIn2, distOut1, distOut2, stutOut1, stutOut2, delOut1, delOut2, hpOut1, hpOut2, lpOut1, lpOut2;
 
   mStutter.setBPM(GetTempo());
   mDelay.setBPM(GetTempo());
+  mDelay.updateBuffer();
+  
+  distIn1 = distIn2 = distOut1 = distOut2 = stutOut1 = stutOut2 = delOut1 = delOut2 = hpOut1 = hpOut2 = lpOut1 = lpOut2 = 0.0;
   
   for (int s = 0; s < nFrames; ++s, ++in1, ++in2, ++out1, ++out2)
   {
@@ -116,8 +121,9 @@ void DistortionDelay::ProcessDoubleReplacing(double** inputs, double** outputs, 
     mFilter.processSamplesLP(delOut1, delOut2, lpOut1, lpOut2, nFrames);
     mFilter.processSamplesHP(lpOut1, lpOut2, hpOut1, hpOut2, nFrames);
     
-    *out1 = *in1 + hpOut1; //Dry + Wet
-    *out2 = *in2 + hpOut2; //Dry + Wet
+    //dry + wet
+    *out1 = *in1 + hpOut1;
+    *out2 = *in2 + hpOut2;
   }
 }
 
