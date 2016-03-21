@@ -15,6 +15,7 @@ private:
     unsigned int sampleCount;
 public:
     void setSampleRate(double sampleRate);
+    void setBuffers();
     void setBPM(double BPM);
     void setTapGain(double tapGain);
     void setTapDelay(int tapDelay);
