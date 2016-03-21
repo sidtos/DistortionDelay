@@ -19,5 +19,5 @@ void Stutter::processSamples(double inputbuffer1, double inputbuffer2, double &o
     outputbuffer1 = inputbuffer1 * (((tanh(sin(mPhase) * 150.)) / 2.) + 0.5);
     outputbuffer2 = inputbuffer2 * (((tanh(sin(mPhase) * 150.)) / 2.) + 0.5);
     //increase wave position
-    mPhase += (mSpeed * (1. / (60. / mBPM))) * 2. * M_PI / double(mSampleRate);
+    mPhase += (mSpeed * (1. / (60. / mBPM))) * 2. * M_PI / mSampleRate;
 }
