@@ -16,8 +16,8 @@ void Stutter::setSpeed(int speed) {
 void Stutter::processSamples(double inputbuffer1, double inputbuffer2, double &outputbuffer1, double &outputbuffer2, int nFrames) {    
     
     //multiply by square wave
-    outputbuffer1 = inputbuffer1 * (((tanh(sin(mPhase) * 200.)) / 2.) + 0.5);
-    outputbuffer2 = inputbuffer2 * (((tanh(sin(mPhase) * 200.)) / 2.) + 0.5);
+    outputbuffer1 = inputbuffer1 * (((tanh(sin(mPhase) * 150.)) / 2.) + 0.5);
+    outputbuffer2 = inputbuffer2 * (((tanh(sin(mPhase) * 150.)) / 2.) + 0.5);
     //increase wave position
     mPhase += (mSpeed * (1. / (60. / mBPM))) * 2. * M_PI / mSampleRate;
 }

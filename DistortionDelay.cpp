@@ -54,16 +54,17 @@ DistortionDelay::DistortionDelay(IPlugInstanceInfo instanceInfo)
   mDistortion.setSampleRate(GetSampleRate());
   mStutter.setSampleRate(GetSampleRate());
   mFilter.setSampleRate(GetSampleRate());
+  mFilter.initializeCoefficients();
 
   //arguments are: name, defaultVal, minVal, maxVal, step, label
   GetParam(kThreshold)->InitDouble("Threshold", 0.01, 0.01, 99.99, 0.01, "%");
   GetParam(kThreshold)->SetShape(2.);
-  GetParam(kSpeed)->InitInt("Speed", 1, 1, 4, "note");
-  GetParam(kTapDelay)->InitInt("Delay", 1, 1, 4, "note");
-  GetParam(kTapGain)->InitInt("DelayGain", -10, -44, 0, "dB");
-  GetParam(kHP)->InitDouble("HP", 20., 20., 10000., 1., "%");
+  GetParam(kSpeed)->InitInt("StutterSpeed", 4, 1, 4, "note");
+  GetParam(kTapDelay)->InitInt("DelayTime", 1, 1, 4, "note");
+  GetParam(kTapGain)->InitInt("DelayGain", 0, -44, 0, "dB");
+  GetParam(kHP)->InitDouble("HP", 20., 20., 5000., 1., "Hz");
   GetParam(kHP)->SetShape(2.);
-  GetParam(kLP)->InitDouble("LP", 20000., 300., 20000., 1., "%");
+  GetParam(kLP)->InitDouble("LP", 20000., 300., 20000., 1., "Hz");
   GetParam(kLP)->SetShape(2.);
 
   //create window + background
@@ -106,6 +107,8 @@ void DistortionDelay::ProcessDoubleReplacing(double** inputs, double** outputs, 
   mStutter.setBPM(GetTempo());
   mDelay.setBPM(GetTempo());
   mDelay.updateBuffer();
+  mFilter.setHPCoefficient();
+  mFilter.setLPCoefficient();
   
   distIn1 = distIn2 = distOut1 = distOut2 = stutOut1 = stutOut2 = delOut1 = delOut2 = hpOut1 = hpOut2 = lpOut1 = lpOut2 = 0.0;
   

@@ -27,6 +27,7 @@ private:
   double mLPFreq;
   double mHPFreq;
   Filter mFilter;
+  IKnobControl *mControl;
   void createPresets();
   double distIn1, distIn2, distOut1, distOut2, stutOut1, stutOut2, delOut1, delOut2, hpOut1, hpOut2, lpOut1, lpOut2;
 };

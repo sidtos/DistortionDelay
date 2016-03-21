@@ -3,8 +3,6 @@
 
 void Filter::setSampleRate(double sampleRate) {
     mSampleRate = sampleRate;
-    setLPCoefficient();
-    setHPCoefficient();
 }
 
 void Filter::setLPFreq(double lpFreq) {
@@ -18,15 +16,21 @@ void Filter::setHPFreq(double hpFreq) {
 }
 
 void Filter::setLPCoefficient() {
+    initializeCoefficients();
     lpx = exp(-2.0 * M_PI * mLPFreq / mSampleRate);
     lpa0 = 1.0 - lpx;
     lpb1 = -lpx;
 }
 
 void Filter::setHPCoefficient() {
+    initializeCoefficients();
     hpx = exp(-2.0 * M_PI * mHPFreq / mSampleRate);
     hpa0 = 1.0 - hpx;
     hpb1 = -hpx;
+}
+
+void Filter::initializeCoefficients() {
+    lpa0 = hpa0 = lpb1 = hpb1 = lpx = hpx = lpTmp1 = lpTmp2 = hpTmp1 = hpTmp2 = 0.0;
 }
 
 void Filter::processSamplesLP(double inputbuffer1, double inputbuffer2, double &outputbuffer1, double &outputbuffer2, int nFrames) {
