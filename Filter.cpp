@@ -16,14 +16,12 @@ void Filter::setHPFreq(double hpFreq) {
 }
 
 void Filter::setLPCoefficient() {
-    initializeCoefficients();
     lpx = exp(-2.0 * M_PI * mLPFreq / mSampleRate);
     lpa0 = 1.0 - lpx;
     lpb1 = -lpx;
 }
 
 void Filter::setHPCoefficient() {
-    initializeCoefficients();
     hpx = exp(-2.0 * M_PI * mHPFreq / mSampleRate);
     hpa0 = 1.0 - hpx;
     hpb1 = -hpx;

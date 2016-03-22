@@ -104,11 +104,12 @@ void DistortionDelay::ProcessDoubleReplacing(double** inputs, double** outputs, 
   double* out1 = outputs[0];
   double* out2 = outputs[1];
 
+  //initialize
   mStutter.setBPM(GetTempo());
   mDelay.setBPM(GetTempo());
   mDelay.updateBuffer();
-  mFilter.setHPCoefficient();
   mFilter.setLPCoefficient();
+  mFilter.setHPCoefficient();
   
   distIn1 = distIn2 = distOut1 = distOut2 = stutOut1 = stutOut2 = delOut1 = delOut2 = hpOut1 = hpOut2 = lpOut1 = lpOut2 = 0.0;
   
@@ -138,6 +139,7 @@ void DistortionDelay::Reset()
   mStutter.setSampleRate(GetSampleRate());
   mDelay.setSampleRate(GetSampleRate());
   mFilter.setSampleRate(GetSampleRate());
+  mFilter.initializeCoefficients();
 }
 
 void DistortionDelay::OnParamChange(int paramIdx)
@@ -177,6 +179,6 @@ void DistortionDelay::OnParamChange(int paramIdx)
 
 void DistortionDelay::createPresets() {
   MakePreset("clean", 0.01, 1, 2, 0, 20., 8000.);
-  MakePreset("slightly distorted", 0.01, 1, 2, 0, 20., 8000.);
-  MakePreset("fuzzy", 0.01, 1, 2, 0, 20., 8000.);
+  MakePreset("slightly distorted", 95., 3, 3, -10, 1800., 3800.);
+  MakePreset("fuzzy", 99.99, 2, 1, -35, 2200., 8000.);
 }
